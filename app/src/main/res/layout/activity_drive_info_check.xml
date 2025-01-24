@@ -19,12 +19,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/sex"
+        android:id="@+id/birth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
-        android:text="性別"
+        android:text="生年月日"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name" />
 
@@ -36,7 +36,7 @@
         android:layout_marginTop="20dp"
         android:text="顔写真"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sex" />
+        app:layout_constraintTop_toBottomOf="@+id/birth" />
 
     <ImageView
         android:id="@+id/face"
@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="トップに戻る"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/face"
         tools:layout_editor_absoluteX="0dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

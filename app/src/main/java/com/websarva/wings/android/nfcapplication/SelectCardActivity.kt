@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.widget.Button
 
 class SelectCardActivity : AppCompatActivity() {
-    private var nfcService = NfcService(this,this)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_card)
@@ -19,15 +17,5 @@ class SelectCardActivity : AppCompatActivity() {
             startActivity(intent)
             this.finish()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        nfcService.scanStart()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        nfcService.scanStop()
     }
 }
