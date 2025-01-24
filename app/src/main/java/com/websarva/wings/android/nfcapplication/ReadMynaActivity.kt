@@ -1,13 +1,9 @@
 package com.websarva.wings.android.nfcapplication
 
 import android.app.AlertDialog
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.nfc.NfcAdapter
-import android.nfc.Tag
-import android.nfc.tech.IsoDep
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
@@ -16,30 +12,25 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import java.io.IOException
-import java.time.chrono.JapaneseDate
 
-class ReadDriveActivity : AppCompatActivity() {
+class ReadMynaActivity : AppCompatActivity() {
+
+    private lateinit var pin1:EditText
+    private lateinit var errorPIN1:TextView
+    private lateinit var buttonReadMyna:Button
+    private lateinit var scanMessage:TextView
 
     private var nfcAdapter: NfcAdapter? = null
     private var nfcService :NfcService? = null
-    private lateinit var pin1:EditText
-    private lateinit var pin2:EditText
-    private lateinit var errorPIN1:TextView
-    private lateinit var errorPIN2:TextView
-    private lateinit var buttonReadDrive:Button
-    private lateinit var scanMessage:TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_read_drive)
+        setContentView(R.layout.activity_read_myna)
 
-        pin1 = findViewById<EditText>(R.id.editTextPIN1)
-        pin2 = findViewById<EditText>(R.id.editTextPIN2)
-        errorPIN1 =findViewById<TextView>(R.id.errorPIN1)
-        errorPIN2 = findViewById<TextView>(R.id.errorPIN2)
-        buttonReadDrive = findViewById<Button>(R.id.buttonReadDrive)
-        scanMessage = findViewById<TextView>(R.id.scanMessage)
+        pin1 = findViewById(R.id.editTextPIN1)
+        errorPIN1 = findViewById(R.id.errorPIN1)
+        buttonReadMyna = findViewById(R.id.buttonReadMyna)
+        scanMessage = findViewById(R.id.scanMessage)
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
@@ -53,41 +44,24 @@ class ReadDriveActivity : AppCompatActivity() {
             }
         }
 
-        pin2.setOnFocusChangeListener { _, boolHasFocus ->
-            if (boolHasFocus) {
-                return@setOnFocusChangeListener
-            }
-            if(pin2.text.toString() == ""){
-                errorPIN2.text = "未入力"
-                return@setOnFocusChangeListener
-            }
-        }
-
-        buttonReadDrive.setOnClickListener{
+        buttonReadMyna.setOnClickListener{
             if(pin1.text.toString() == ""){
                 errorPIN1.text = "未入力"
                 return@setOnClickListener
             }
-            if(pin2.text.toString() == ""){
-                errorPIN2.text = "未入力"
-                return@setOnClickListener
-            }
             clearErrorMessage()
             pin1.clearFocus()
-            pin2.clearFocus()
             //キーボード非表示
             val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(pin1.windowToken, 0)
-            inputMethodManager.hideSoftInputFromWindow(pin2.windowToken,0)
             if(nfcAdapter == null) {
-                Toast.makeText(this,"この端末はNFC機能がありません。",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,"この端末はNFC機能がありません。", Toast.LENGTH_SHORT).show()
             } else if(!nfcAdapter!!.isEnabled) {
-                showEnableNFCDialog(this@ReadDriveActivity)
+                showEnableNFCDialog(this)
             }else{
                 scanMessage.text = "スキャン準備中"
-                val keyList = arrayListOf(pin1.text.toString(),pin2.text.toString())
+                val keyList = arrayListOf(pin1.text.toString())
                 pin1.isFocusable = false
-                pin2.isFocusable = false
                 nfcService = NfcService(this,this,keyList,scanMessage)
                 nfcService!!.scanStart()
             }
@@ -126,6 +100,5 @@ class ReadDriveActivity : AppCompatActivity() {
 
     private fun clearErrorMessage(){
         errorPIN1.text = ""
-        errorPIN2.text = ""
     }
 }

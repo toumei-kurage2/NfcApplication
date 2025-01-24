@@ -11,9 +11,16 @@ class SelectCardActivity : AppCompatActivity() {
         setContentView(R.layout.activity_select_card)
 
         val buttonDrive = findViewById<Button>(R.id.buttonDrive)
+        val buttonMyna = findViewById<Button>(R.id.buttonMyna)
 
         buttonDrive.setOnClickListener{
             val intent = Intent(applicationContext, ReadDriveActivity::class.java)
+            startActivity(intent)
+            this.finish()
+        }
+
+        buttonMyna.setOnClickListener{
+            val intent = Intent(applicationContext,ReadMynaActivity::class.java)
             startActivity(intent)
             this.finish()
         }

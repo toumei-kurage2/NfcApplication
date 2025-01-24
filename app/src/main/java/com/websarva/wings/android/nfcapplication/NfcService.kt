@@ -91,6 +91,45 @@ class NfcService(private val context: Context, private val activity : Activity,p
             }
         }
 
+        private fun myna(reader:JeidReader,isoDep:IsoDep){
+            try {
+                val ap = reader.selectINTextAP()
+                // 暗証番号1を入力
+                try {
+                    ap.verifyPin(keyList[0])
+                } catch (e: InvalidPinException) {
+                    if (e.isBlocked) {
+                        throw Exception("暗証番号1がブロックされています。")
+                    } else {
+                        throw Exception("暗証番号1が間違っています。残り回数: ${e.counter}")
+                    }
+                }
+
+                // Filesオブジェクトの読み出し
+                val files = ap.readFiles()
+
+                // Filesオブジェクトから券面情報を取得
+                val sex = files.attributes.sex
+                val birth = files.attributes.birth
+                val name = files.attributes.name
+                // Filesオブジェクトから顔写真を取得
+                val face= files.attributes.encoded
+                val intent = Intent(context,DriveInfoCheckActivity::class.java)
+                intent.putExtra("name",name)
+                intent.putExtra("birth",birth)
+                intent.putExtra("sex",sex)
+                intent.putExtra("face",face)
+                context.startActivity(intent)
+            } catch (e: IOException) {
+                throw Exception("カードの接続が途切れました。")
+            } catch (e: Exception) {
+                throw Exception("予期せぬエラーが発生しました。")
+            }
+            finally {
+                isoDep.close()
+            }
+        }
+
         // NFCタグが検出されると呼ばれる
         override fun onTagDiscovered(tag: Tag) {
             val thread = Thread{
@@ -104,6 +143,8 @@ class NfcService(private val context: Context, private val activity : Activity,p
                 val type = reader.detectCardType()
                 if (type == CardType.DL) {
                     drive(reader,isoDep)
+                }else if(type == CardType.IN){
+                    myna(reader,isoDep)
                 }
             }catch (e:Exception){
                 handler.post{
