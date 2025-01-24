@@ -49,15 +49,10 @@ class NfcService(private val context: Context, private val activity : Activity,p
                     ap.verifyPin1(keyList[0])
                 } catch (e: InvalidPinException) {
                     if (e.isBlocked) {
-                        handler.post{
-                            throw Exception("暗証番号1がブロックされています。")
-                        }
+                        throw Exception("暗証番号1がブロックされています。")
                     } else {
-                        handler.post{
-                            throw Exception("暗証番号1が間違っています。残り回数: ${e.counter}")
-                        }
+                         throw Exception("暗証番号1が間違っています。残り回数: ${e.counter}")
                     }
-                    return
                 }
 
                 // 暗証番号2を入力
@@ -65,15 +60,10 @@ class NfcService(private val context: Context, private val activity : Activity,p
                     ap.verifyPin2(keyList[1])
                 } catch (e: InvalidPinException) {
                     if (e.isBlocked) {
-                        handler.post{
-                            throw Exception("暗証番号2がブロックされています。")
-                        }
+                        throw Exception("暗証番号2がブロックされています。")
                     } else {
-                        handler.post{
-                            throw Exception("暗証番号2が間違っています。残り回数: ${e.counter}")
-                        }
+                        throw Exception("暗証番号2が間違っています。残り回数: ${e.counter}")
                     }
-                    return
                 }
 
                 // Filesオブジェクトの読み出し
@@ -92,10 +82,11 @@ class NfcService(private val context: Context, private val activity : Activity,p
                 intent.putExtra("face",face)
                 context.startActivity(intent)
             } catch (e: IOException) {
-                handler.post{
-                    throw Exception("予期せぬエラーが発生しました。")
-                }
-            }finally {
+                throw Exception("カードの接続が途切れました。")
+            } catch (e: Exception) {
+                throw Exception("予期せぬエラーが発生しました。")
+            }
+            finally {
                 isoDep.close()
             }
         }
