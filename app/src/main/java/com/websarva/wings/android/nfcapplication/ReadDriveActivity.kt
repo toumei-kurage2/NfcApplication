@@ -50,16 +50,23 @@ class ReadDriveActivity : AppCompatActivity() {
 
     private var nfcAdapter: NfcAdapter? = null
     private var nfcService :NfcService? = null
+    private lateinit var pin1:EditText
+    private lateinit var pin2:EditText
+    private lateinit var errorPIN1:TextView
+    private lateinit var errorPIN2:TextView
+    private lateinit var buttonReadDrive:Button
+    private lateinit var scanMessage:TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_read_drive)
 
-        val pin1 = findViewById<EditText>(R.id.editTextPIN1)
-        val pin2 = findViewById<EditText>(R.id.editTextPIN2)
-        val errorPIN1 =findViewById<TextView>(R.id.errorPIN1)
-        val errorPIN2 = findViewById<TextView>(R.id.errorPIN2)
-        val buttonReadDrive = findViewById<Button>(R.id.buttonReadDrive)
-        val scanMessage = findViewById<TextView>(R.id.scanMessage)
+        pin1 = findViewById<EditText>(R.id.editTextPIN1)
+        pin2 = findViewById<EditText>(R.id.editTextPIN2)
+        errorPIN1 =findViewById<TextView>(R.id.errorPIN1)
+        errorPIN2 = findViewById<TextView>(R.id.errorPIN2)
+        buttonReadDrive = findViewById<Button>(R.id.buttonReadDrive)
+        scanMessage = findViewById<TextView>(R.id.scanMessage)
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
@@ -84,11 +91,15 @@ class ReadDriveActivity : AppCompatActivity() {
         }
 
         buttonReadDrive.setOnClickListener{
-            if(pin1.text.toString() == "" || pin2.text.toString() == ""){
+            if(pin1.text.toString() == ""){
                 errorPIN1.text = "未入力"
+                return@setOnClickListener
+            }
+            if(pin2.text.toString() == ""){
                 errorPIN2.text = "未入力"
                 return@setOnClickListener
             }
+            clearErrorMessage()
             pin1.clearFocus()
             pin2.clearFocus()
             //キーボード非表示
@@ -102,6 +113,8 @@ class ReadDriveActivity : AppCompatActivity() {
             }else{
                 scanMessage.text = "スキャン準備中"
                 val keyList = arrayListOf(pin1.text.toString(),pin2.text.toString())
+                pin1.isFocusable = false
+                pin2.isFocusable = false
                 nfcService = NfcService(this,this,keyList,scanMessage)
                 nfcService!!.scanStart()
             }
@@ -136,5 +149,10 @@ class ReadDriveActivity : AppCompatActivity() {
         super.onPause()
         if(nfcService != null)
             nfcService!!.scanStop()
+    }
+
+    private fun clearErrorMessage(){
+        errorPIN1.text = ""
+        errorPIN2.text = ""
     }
 }
